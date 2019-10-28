@@ -3,6 +3,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -17,8 +18,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage window) {
-        ImageView tabImage[] = {new ImageView("default.jpg"), new ImageView("image1.jpg"), new ImageView("image2.jpg"), new ImageView("image4.jpg")};
         BorderPane bp = new BorderPane();
+        ImageView iv = new ImageView();
+        getImage("default",bp,iv);
 
 
         //affichage Slider
@@ -42,7 +44,7 @@ public class Main extends Application {
         vb.getChildren().addAll(saturationTxt, saturation, luminositeTxt, luminosite, contrasteTxt, contraste, teinteTxt, teinte);
         HBox hb = new HBox(10);
         hb.setAlignment(Pos.CENTER);
-        hb.getChildren().addAll(getImage(tabImage[0], bp), vb);
+        hb.getChildren().addAll(iv, vb);
         bp.setCenter(hb);
 
         //menus
@@ -55,8 +57,7 @@ public class Main extends Application {
         MenuItem restart = new MenuItem("Réinitialiser");
         restart.setOnAction((n) -> {
             backToNormal(tabSlider);
-            hb.getChildren().remove(0);
-            hb.getChildren().add(0, getImage(tabImage[0], bp));
+            getImage("default",bp,iv);
             notification("Données réinitialisées", bp);
         });
         MenuItem image1 = new MenuItem("Image 1");
@@ -64,12 +65,12 @@ public class Main extends Application {
         MenuItem image3 = new MenuItem("Image 3");
         charger.getItems().addAll(image1, image2, image3);
         action.getItems().add(restart);
-        menuAction(image1, image2, image3, bp, tabImage, hb, tabSlider);
+        menuAction(image1, image2, image3, bp,iv, hb, tabSlider);
         bp.setTop(menubar);
 
 
         //Clic droit
-        hb.setOnContextMenuRequested((event ->new ContextMenu(action,fichiers).show(hb, event.getScreenX(), event.getScreenY())));
+        hb.setOnContextMenuRequested((event -> new ContextMenu(action, fichiers).show(hb, event.getScreenX(), event.getScreenY())));
 
 
         //action des controles
@@ -117,12 +118,15 @@ public class Main extends Application {
 
     }
 
-    private ImageView getImage(ImageView iv, BorderPane bp) {
+    private void getImage(String nom, BorderPane bp, ImageView iv) {
+
+        Image image = new Image(nom + ".jpg");
+        iv.setImage(image);
         iv.setFitWidth(450);
         iv.setPreserveRatio(true);
         notification(iv.getImage().getUrl() + " chargé", bp);
 
-        return iv;
+
     }
 
     private Slider slider() {
@@ -134,22 +138,19 @@ public class Main extends Application {
         return slider;
     }
 
-    private void menuAction(MenuItem m1, MenuItem m2, MenuItem m3, BorderPane bp, ImageView iv[], HBox hb, Slider slider[]) {
+    private void menuAction(MenuItem m1, MenuItem m2, MenuItem m3, BorderPane bp, ImageView iv, HBox hb, Slider[] slider) {
 
 
         m1.setOnAction((n) -> {
-            hb.getChildren().remove(0);
-            hb.getChildren().add(0, getImage(iv[1], bp));
+            getImage("image1",bp,iv);
             backToNormal(slider);
         });
         m2.setOnAction((n) -> {
-            hb.getChildren().remove(0);
-            hb.getChildren().add(0, getImage(iv[2], bp));
+            getImage("image2",bp,iv);
             backToNormal(slider);
         });
         m3.setOnAction((n) -> {
-            hb.getChildren().remove(0);
-            hb.getChildren().add(0, getImage(iv[3], bp));
+            getImage("image2",bp,iv);
             backToNormal(slider);
         });
     }
